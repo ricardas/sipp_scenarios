@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <!DOCTYPE scenario SYSTEM "sipp.dtd">
 
-<!-- UAS receive UPDATE -->
+<!-- UAS receive RE-INVITE -->
 
-<!-- sipp -sf /path/to/uas_receive_update.xml -i LOCAL_IP -p LOCAL_PORT -->
+<!-- sipp -sf /path/to/uas_reinvite_receive.xml -i LOCAL_IP -p LOCAL_PORT -->
 
-<!-- sipp -sf /usr/src/sipp_scenarios/uas/uas_receive_update.xml -i 192.168.0.15 -p 5069 -->
+<!-- sipp -sf /usr/src/sipp_scenarios/uas/uas_reinvite_receive.xml -i 192.168.0.15 -p 5069 -->
 
-<scenario name="UAS receive UPDATE">
+<scenario name="UAS receive RE-INVITE">
 
   <!-- Receive initial INVITE and get details from this request -->
   <recv request="INVITE" crlf="true">
     <action>
       <ereg regexp="\<sip:.*@[0-9\.]+\>" search_in="hdr" header="To" assign_to="UAC_TO_URI"/>
-      <ereg regexp=".*" search_in="hdr" header="CSeq" assign_to="UAC_INVITE_CSEQ"/>
     </action>
   </recv>
 
@@ -48,13 +47,10 @@
     ]]>
   </send>
 
-  <!-- Wait for UPDATE -->
-  <recv request="UPDATE"
-        rtd="true"
-        crlf="true">
-  </recv>
+  <!-- Ring for one second -->
+  <pause milliseconds="1000"/>
 
-  <!-- Send 200 to UPDATE -->
+  <!-- Answer -->
   <send retrans="500">
     <![CDATA[
       SIP/2.0 200 OK
@@ -77,7 +73,19 @@
     ]]>
   </send>
 
-  <!-- Answer initial INVITE -->
+  <!-- We should be getting ACK for our 200 OK -->
+  <recv request="ACK"
+        rtd="true"
+        crlf="true">
+  </recv>
+
+  <!-- Wait for RE-INVITE -->
+  <recv request="INVITE"
+        rtd="true"
+        crlf="true">
+  </recv>
+
+  <!-- Send 200 to RE-INVITE -->
   <send retrans="500">
     <![CDATA[
       SIP/2.0 200 OK
@@ -85,7 +93,7 @@
       [last_From:]
       [last_To:];tag=[pid]SIPpTag01[call_number]
       [last_Call-ID:]
-      CSeq[UAC_INVITE_CSEQ]
+      [last_CSeq:]
       Contact: <[$UAC_TO_URI]>
       Content-Type: application/sdp
       Content-Length: [len]
@@ -99,12 +107,6 @@
       a=rtpmap:0 PCMU/8000
     ]]>
   </send>
-
-  <!-- We should be getting ACK for our 200 OK -->
-  <recv request="ACK"
-        rtd="true"
-        crlf="true">
-  </recv>
 
   <!-- We should be getting ACK for our 200 OK -->
   <recv request="ACK"
