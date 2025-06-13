@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE scenario SYSTEM "sipp.dtd">
+
+<!-- UAS send update -->
+
+<!-- sipp -sf /path/to/sipp_uas_send_update.xml -i LOCAL_IP -p LOCAL_PORT -->
+
+<!-- sipp -sf /usr/src/sipp_scenarios/uas/sipp_uas_send_update.xml -i 192.168.0.15 -p 5069 -->
+
+<scenario name="UAS send update">
+
+  <!-- Get details from the initial invite sent to us -->
+  <recv request="INVITE" crlf="true">
+    <action>
+      <ereg regexp="<.*>" search_in="hdr" header="From" assign_to="UAC_FROM_URI"/>
+      <ereg regexp=";tag=.*" search_in="hdr" header="From" assign_to="UAC_FROM_TAG"/>
+      <ereg regexp="sip:.*@[0-9\.]+" search_in="hdr" header="Contact" assign_to="UAC_CONTACT_URI"/>
+      <ereg regexp="<.*>" search_in="hdr" header="To" assign_to="UAC_TO_URI"/>
+      <ereg regexp=".*" search_in="hdr" header="CSeq" assign_to="UAC_INVITE_CSEQ"/>
+    </action>
+  </recv>
+
+  <!-- Save received Via values -->
+  <nop>
+    <action>
+      <assignstr assign_to="UAC_VIA" value="[last_Via:]" />
+    </action>
+  </nop>
+
+  <!-- Send a 100 Trying response -->
+  <send>
+    <![CDATA[
+      SIP/2.0 100 Trying
+      [last_Via:]
+      [last_From:]
+      [last_To:]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Contact: [$UAC_TO_URI]
+      Content-Length: 0
+    ]]>
+  </send>
+
+  <!-- Add some delay between messages -->
+  <pause milliseconds="50"/>
+
+  <!-- Send session progress response -->
+  <send>
+    <![CDATA[
+      SIP/2.0 183 Sessions Progress
+      [last_Via:]
+      [last_From:]
+      [last_To:];tag=[pid]SIPpTag01[call_number]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Contact: [$UAC_TO_URI]
+      Content-Type: application/sdp
+      Content-Length: [len]
+
+      v=0
+      o=user1 53655765 2353687637 IN IP[local_ip_type] [local_ip]
+      s=-
+      c=IN IP[media_ip_type] [media_ip]
+      t=0 0
+      m=audio [media_port] RTP/AVP 0
+      a=rtpmap:0 PCMU/8000
+    ]]>
+  </send>
+
+  <!-- Ring for one second -->
+  <pause milliseconds="1000"/>
+
+  <!-- Send UPDATE -->
+  <send retrans="500">
+    <![CDATA[
+      UPDATE [$UAC_CONTACT_URI] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: [$UAC_TO_URI];tag=[pid]SIPpTag01[call_number]
+      To: [$UAC_FROM_URI][$UAC_FROM_TAG]
+      Call-ID: [call_id]
+      CSeq: 1122 UPDATE
+      Contact: [$UAC_TO_URI]
+      Max-Forwards: 70
+      Subject: Performance Test
+      Content-Type: application/sdp
+      Content-Length: [len]
+
+      v=0
+      o=user1 53655765 2353687637 IN IP[local_ip_type] [local_ip]
+      s=-
+      c=IN IP[media_ip_type] [media_ip]
+      t=0 0
+      m=audio [media_port] RTP/AVP 0
+      a=rtpmap:0 PCMU/8000
+    ]]>
+  </send>
+
+  <!-- Wait for optional 100 Trying response -->
+  <recv response="100"
+        optional="true">
+  </recv>
+
+  <!-- We should be getting 200 OK for our update-->
+  <recv response="200" crlf="true">
+  </recv>
+
+  <!-- Send ACK for received 200 OK -->
+  <send>
+    <![CDATA[
+      ACK [$UAC_CONTACT_URI] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: [$UAC_TO_URI];tag=[pid]SIPpTag01[call_number]
+      To: [$UAC_FROM_URI][$UAC_FROM_TAG]
+      Call-ID: [call_id]
+      CSeq: 1122 ACK
+      Contact: [$UAC_TO_URI]
+      Max-Forwards: 70
+      Subject: Performance Test
+      Content-Length: 0
+    ]]>
+  </send>
+
+  <!-- Ring for another second -->
+  <pause milliseconds="1000"/>
+
+  <!-- Answer -->
+  <send retrans="500">
+    <![CDATA[
+      SIP/2.0 200 OK
+      [$UAC_VIA]
+      From: [$UAC_FROM_URI][$UAC_FROM_TAG]
+      To: [$UAC_TO_URI];tag=[pid]SIPpTag01[call_number]
+      [last_Call-ID:]
+      CSeq[$UAC_INVITE_CSEQ]
+      Contact: [$UAC_TO_URI]
+      Content-Type: application/sdp
+      Content-Length: [len]
+
+      v=0
+      o=user1 53655765 2353687637 IN IP[local_ip_type] [local_ip]
+      s=-
+      c=IN IP[media_ip_type] [media_ip]
+      t=0 0
+      m=audio [media_port] RTP/AVP 0
+      a=rtpmap:0 PCMU/8000
+    ]]>
+  </send>
+
+  <!-- We should be getting ACK for our 200 OK -->
+  <recv request="ACK"
+        rtd="true"
+        crlf="true">
+  </recv>
+
+  <!-- Wait for BYE request -->
+  <recv request="BYE">
+  </recv>
+
+  <!-- Send a 200 OK response to BYE -->
+  <send>
+    <![CDATA[
+      SIP/2.0 200 OK
+      [last_Via:]
+      [last_From:]
+      [last_To:]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Contact: [$UAC_TO_URI]
+      Content-Length: 0
+    ]]>
+  </send>
+
+  <!-- Keep the call open for a while in case the 200 is lost to be     -->
+  <!-- able to retransmit it if we receive the BYE again.               -->
+  <timewait milliseconds="4000"/>
+
+  <!-- Definition of the response time repartition table (unit is ms)   -->
+  <ResponseTimeRepartition value="10, 20, 30, 40, 50, 100, 150, 200"/>
+
+  <!-- Definition of the call length repartition table (unit is ms)     -->
+  <CallLengthRepartition value="10, 50, 100, 500, 1000, 5000, 10000"/>
+
+</scenario>
