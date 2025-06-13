@@ -58,7 +58,7 @@
       Content-Length: [len]
 
       v=0
-      o=user1 53655765 2353687637 IN IP[local_ip_type] [local_ip]
+      o=user1 53655765 2353687636 IN IP[local_ip_type] [local_ip]
       s=-
       c=IN IP[media_ip_type] [media_ip]
       t=0 0
@@ -86,7 +86,7 @@
       Content-Length: [len]
 
       v=0
-      o=user1 53655765 2353687637 IN IP[local_ip_type] [local_ip]
+      o=user1 53655765 2353687636 IN IP[local_ip_type] [local_ip]
       s=-
       c=IN IP[media_ip_type] [media_ip]
       t=0 0
@@ -137,7 +137,7 @@
       Content-Length: [len]
 
       v=0
-      o=user1 53655765 2353687637 IN IP[local_ip_type] [local_ip]
+      o=user1 53655765 2353687636 IN IP[local_ip_type] [local_ip]
       s=-
       c=IN IP[media_ip_type] [media_ip]
       t=0 0
