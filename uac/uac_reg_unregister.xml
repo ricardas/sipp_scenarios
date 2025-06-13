@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE scenario SYSTEM "sipp.dtd">
+
+<!-- Unregister from UAS -->
+
+<!-- sipp -sf /path/to/uac_reg_unregister.xml REMOTE_IP -i LOCAL_IP -p LOCAL_PORT -s USER -au USER -ap PASSWORD -r 1 -m 1 -->
+
+<!-- sipp -sf /usr/src/sipp_scenarios/uac/uac_reg_unregister.xml 192.168.0.123 -i 192.168.0.15 -p 5069 -s 2222 -au 2222 -ap labas123456 -r 1 -m 1 -->
+
+<scenario name="Basic Unregister UAC">
+
+  <!-- Attempt to unregister without Authentication -->
+  <send retrans="500">
+    <![CDATA[
+      REGISTER sip:[service]@[remote_ip]:[remote_port] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: <sip:[service]@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
+      To: [service] <sip:[service]@[remote_ip]:[remote_port]>
+      Call-ID: [call_id]
+      CSeq: 1 REGISTER
+      Contact: <sip:[service]@[local_ip]:[local_port]>
+      Expires: 0
+      Max-Forwards: 70
+      Subject: Performance Test
+      Content-Type: application/sdp
+      Content-Length: [len]
+    ]]>
+  </send>
+
+  <!-- Successfully unregistered without being challenged -->
+  <recv response="200"
+        optional="true"
+        next="auth_done">
+  </recv>
+
+  <!-- Challenge received -->
+  <recv response="401"
+        auth="true">
+  </recv>
+
+  <!-- Attempt to unregister with Authentication -->
+  <send retrans="500">
+    <![CDATA[
+      REGISTER sip:[service]@[remote_ip]:[remote_port] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: <sip:[service]@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
+      To: [service] <sip:[service]@[remote_ip]:[remote_port]>
+      Call-ID: [call_id]
+      CSeq: 1 REGISTER
+      Contact: <sip:[service]@[local_ip]:[local_port]>
+      Expires: 0
+      Max-Forwards: 70
+      [authentication]
+      Subject: Performance Test
+      Content-Type: application/sdp
+      Content-Length: [len]
+    ]]>
+  </send>
+
+  <!-- Successfully unregistered after being challenged -->
+  <recv response="200">
+  </recv>
+
+  <label id="auth_done" />
+
+  <!-- definition of the response time repartition table (unit is ms)   -->
+  <ResponseTimeRepartition value="10, 20, 30, 40, 50, 100, 150, 200"/>
+
+  <!-- definition of the call length repartition table (unit is ms)     -->
+  <CallLengthRepartition value="10, 50, 100, 500, 1000, 5000, 10000"/>
+
+</scenario>
