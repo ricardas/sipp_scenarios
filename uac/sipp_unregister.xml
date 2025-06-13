@@ -5,7 +5,7 @@
 
 <!-- sipp -sf /path/to/sipp_unregister.xml REMOTE_IP -i LOCAL_IP -p LOCAL_PORT -s USER -au USER -ap PASSWORD -r 1 -m 1  -->
 
-<!-- sipp -sf /usr/src/sipp_scenarios/uac/sipp_unregister.xml 192.168.0.123 -i 192.168.0.123 -p 5069 -s 2222 -au 2222 -ap labas123456 -r 1 -m 1  -->
+<!-- sipp -sf /usr/src/sipp_scenarios/uac/sipp_unregister.xml 192.168.0.123 -i 192.168.0.15 -p 5069 -s 2222 -au 2222 -ap labas123456 -r 1 -m 1  -->
 
 <scenario name="Basic Unregister UAC">
 
