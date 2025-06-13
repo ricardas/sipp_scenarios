@@ -73,7 +73,6 @@
       t=0 0
       m=audio [media_port] RTP/AVP 0
       a=rtpmap:0 PCMU/8000
-
     ]]>
   </send>
 
@@ -86,7 +85,7 @@
   <!-- Wait a second before doing re-invite -->
   <pause milliseconds="1000"/>
 
-  <!-- Re-invite -->
+  <!-- Send INVITE (re-invite) -->
   <send retrans="500">
     <![CDATA[
       INVITE [$UAC_CONTACT_URI] SIP/2.0
@@ -94,7 +93,7 @@
       From: [$UAC_TO_URI];tag=[pid]SIPpTag01[call_number]
       To: [$UAC_FROM_URI][$UAC_FROM_TAG]
       Call-ID: [call_id]
-      CSeq: 11 INVITE
+      CSeq: 1122 INVITE
       Contact: <[$UAC_TO_URI]>
       Max-Forwards: 70
       Subject: Performance Test
@@ -108,7 +107,6 @@
       t=0 0
       m=audio [media_port] RTP/AVP 0
       a=rtpmap:0 PCMU/8000
-
     ]]>
   </send>
 
@@ -129,7 +127,7 @@
       From: [$UAC_TO_URI];tag=[pid]SIPpTag01[call_number]
       To: [$UAC_FROM_URI][$UAC_FROM_TAG]
       Call-ID: [call_id]
-      CSeq: 11 ACK
+      CSeq: 1122 ACK
       Contact: <[$UAC_TO_URI]>
       Max-Forwards: 70
       Subject: Performance Test
