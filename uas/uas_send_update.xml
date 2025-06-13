@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <!DOCTYPE scenario SYSTEM "sipp.dtd">
 
-<!-- UAS send update -->
+<!-- UAS send UPDATE -->
 
 <!-- sipp -sf /path/to/uas_send_update.xml -i LOCAL_IP -p LOCAL_PORT -->
 
 <!-- sipp -sf /usr/src/sipp_scenarios/uas/uas_send_update.xml -i 192.168.0.15 -p 5069 -->
 
-<scenario name="UAS send update">
+<scenario name="UAS send UPDATE">
 
   <!-- Get details from the initial invite sent to us -->
   <recv request="INVITE" crlf="true">
@@ -123,7 +123,7 @@
   <!-- Ring for another second -->
   <pause milliseconds="1000"/>
 
-  <!-- Answer -->
+  <!-- Answer initial INVITE -->
   <send retrans="500">
     <![CDATA[
       SIP/2.0 200 OK
