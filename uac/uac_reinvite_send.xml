@@ -83,7 +83,7 @@
       From: <sip:[$from]@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
       To: <sip:[service]@[remote_ip]:[remote_port]>[peer_tag_param]
       Call-ID: [call_id]
-      CSeq: 10 INVITE
+      CSeq: 2 INVITE
       Contact: <sip:[$from]@[local_ip]:[local_port]>
       Max-Forwards: 70
       Subject: Performance Test
@@ -116,7 +116,7 @@
       From: <sip:[$from]@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
       To: <sip:[service]@[remote_ip]:[remote_port]>[peer_tag_param]
       Call-ID: [call_id]
-      CSeq: 10 ACK
+      CSeq: 2 ACK
       Contact: <sip:[$from]@[local_ip]:[local_port]>
       Max-Forwards: 70
       Subject: Performance Test
@@ -135,7 +135,7 @@
       From: <sip:[$from]@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
       To: <sip:[service]@[remote_ip]:[remote_port]>[peer_tag_param]
       Call-ID: [call_id]
-      CSeq: 20 BYE
+      CSeq: 3 BYE
       Contact: <sip:[$from]@[local_ip]:[local_port]>
       Max-Forwards: 70
       Subject: Performance Test
