@@ -85,7 +85,7 @@
       [last_From:]
       [last_To:];tag=[pid]SIPpTag01[call_number]
       [last_Call-ID:]
-      CSeq[UAC_INVITE_CSEQ]
+      CSeq[$UAC_INVITE_CSEQ]
       Contact: <[$UAC_TO_URI]>
       Content-Type: application/sdp
       Content-Length: [len]
