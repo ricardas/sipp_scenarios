@@ -12,7 +12,7 @@
   <!-- Receive initial INVITE and get details from this request -->
   <recv request="INVITE" crlf="true">
     <action>
-      <ereg regexp="\<sip:.*@[0-9\.]+\>" search_in="hdr" header="To" assign_to="UAC_TO_URI"/>
+      <ereg regexp="\<sip:.*@[0-9\.:]+\>" search_in="hdr" header="To" assign_to="UAC_TO_URI"/>
     </action>
   </recv>
 

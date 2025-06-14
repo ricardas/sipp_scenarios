@@ -14,8 +14,8 @@
     <action>
       <ereg regexp="<.*>" search_in="hdr" header="From" assign_to="UAC_FROM_URI"/>
       <ereg regexp=";tag=.*" search_in="hdr" header="From" assign_to="UAC_FROM_TAG"/>
-      <ereg regexp="sip:.*@[0-9\.]+" search_in="hdr" header="Contact" assign_to="UAC_CONTACT_URI"/>
-      <ereg regexp="\<sip:.*@[0-9\.]+\>" search_in="hdr" header="To" assign_to="UAC_TO_URI"/>
+      <ereg regexp="sip:.*@[0-9\.:]+" search_in="hdr" header="Contact" assign_to="UAC_CONTACT_URI"/>
+      <ereg regexp="\<sip:.*@[0-9\.:]+\>" search_in="hdr" header="To" assign_to="UAC_TO_URI"/>
     </action>
   </recv>
 

@@ -52,7 +52,7 @@
   <!-- Receive answer -->
   <recv response="200" rtd="true">
     <action>
-      <ereg regexp="sip:.*@[0-9\.]+" search_in="hdr" header="Contact" assign_to="UAS_CONTACT_URI"/>
+      <ereg regexp="sip:.*@[0-9\.:]+" search_in="hdr" header="Contact" assign_to="UAS_CONTACT_URI"/>
     </action>
   </recv>
 
