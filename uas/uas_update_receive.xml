@@ -12,10 +12,17 @@
   <!-- Receive initial INVITE and get details from this request -->
   <recv request="INVITE" crlf="true">
     <action>
-      <ereg regexp="\<sip:.*@[0-9\.:]\>" search_in="hdr" header="To" assign_to="UAC_TO_URI"/>
+      <ereg regexp="<sip:.*>" search_in="hdr" header="To" assign_to="UAC_TO_URI"/>
       <ereg regexp=".*" search_in="hdr" header="CSeq" assign_to="UAC_INVITE_CSEQ"/>
     </action>
   </recv>
+
+  <!-- Save received Via values -->
+  <nop>
+    <action>
+      <assignstr assign_to="UAC_VIA" value="[last_Via:]" />
+    </action>
+  </nop>
 
   <!-- Send a 100 Trying response -->
   <send>
@@ -63,13 +70,13 @@
         crlf="true">
   </recv>
 
-  <!-- Send 200 to UPDATE -->
-  <send retrans="500">
+  <!-- Send 200 OK to UPDATE -->
+  <send>
     <![CDATA[
       SIP/2.0 200 OK
       [last_Via:]
       [last_From:]
-      [last_To:];tag=[pid]SIPpTag01[call_number]
+      [last_To:]
       [last_Call-ID:]
       [last_CSeq:]
       Contact: [$UAC_TO_URI]
@@ -86,13 +93,16 @@
     ]]>
   </send>
 
+  <!-- Add some delay between messages -->
+  <pause milliseconds="50"/>
+
   <!-- Answer initial INVITE -->
   <send retrans="500">
     <![CDATA[
       SIP/2.0 200 OK
-      [last_Via:]
+      [$UAC_VIA]
       [last_From:]
-      [last_To:];tag=[pid]SIPpTag01[call_number]
+      [last_To:]
       [last_Call-ID:]
       CSeq[$UAC_INVITE_CSEQ]
       Contact: [$UAC_TO_URI]
@@ -108,12 +118,6 @@
       a=rtpmap:0 PCMU/8000
     ]]>
   </send>
-
-  <!-- We should be getting ACK for our 200 OK -->
-  <recv request="ACK"
-        rtd="true"
-        crlf="true">
-  </recv>
 
   <!-- We should be getting ACK for our 200 OK -->
   <recv request="ACK"
