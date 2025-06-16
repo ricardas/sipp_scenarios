@@ -2,10 +2,8 @@
 <!DOCTYPE scenario SYSTEM "sipp.dtd">
 
 <!-- UAC receive UPDATE -->
-
 <!-- sipp -sf /path/to/uac_update_receive.xml REMOTE_IP -i LOCAL_IP -p LOCAL_PORT -r 1 -m 1 -s NUMBER_TO -set from NUMBER_FROM -->
-
-<!-- sipp -sf /usr/src/sipp_scenarios/uac/uac_update_receive.xml 192.168.0.123 -i 192.168.0.15 -p 5069 -r 1 -m 1 -s 37061234567 -set from 37060000000 -->
+<!-- sipp -sf /usr/src/sipp_scenarios/uac/uac_update_receive.xml 192.168.0.123 -i 192.168.0.15 -p 5068 -r 1 -m 1 -s 37061234567 -set from 37060000000 -->
 
 <scenario name="UAC receive UPDATE">
 

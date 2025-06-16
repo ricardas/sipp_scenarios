@@ -2,9 +2,7 @@
 <!DOCTYPE scenario SYSTEM "sipp.dtd">
 
 <!-- UAS send RE-INVITE -->
-
 <!-- sipp -sf /path/to/uas_reinvite_send.xml -i LOCAL_IP -p LOCAL_PORT -->
-
 <!-- sipp -sf /usr/src/sipp_scenarios/uas/uas_reinvite_send.xml -i 192.168.0.15 -p 5069 -->
 
 <scenario name="UAS send RE-INVITE">
