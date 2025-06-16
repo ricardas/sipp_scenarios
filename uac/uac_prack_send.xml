@@ -18,7 +18,7 @@
       INVITE sip:[service]@[remote_ip]:[remote_port] SIP/2.0
       Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
       From: <sip:[$from]@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
-      To: [service] <sip:[service]@[remote_ip]:[remote_port]>
+      To: <sip:[service]@[remote_ip]:[remote_port]>
       Call-ID: [call_id]
       CSeq: 1 INVITE
       Contact: <sip:[$from]@[local_ip]:[local_port]>
@@ -26,7 +26,6 @@
       Supported: 100rel
       Require: 100rel
       Allow: INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, NOTIFY, UPDATE
-      Subject: Performance Test
       Content-Type: application/sdp
       Content-Length: [len]
 
@@ -58,9 +57,9 @@
   <send>
     <![CDATA[
       PRACK [$UAS_CONTACT_URI] SIP/2.0
-      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]-prack
       From: <sip:[$from]@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
-      To: [service] <sip:[service]@[remote_ip]:[remote_port]>[peer_tag_param]
+      To: <sip:[service]@[remote_ip]:[remote_port]>[peer_tag_param]
       Call-ID: [call_id]
       CSeq: 2 PRACK
       RAck[$UAS_RSEQ] [$UAS_CSEQ]
@@ -83,12 +82,11 @@
       ACK [$UAS_CONTACT_URI] SIP/2.0
       Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
       From: <sip:[$from]@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
-      To: [service] <sip:[service]@[remote_ip]:[remote_port]>[peer_tag_param]
+      To: <sip:[service]@[remote_ip]:[remote_port]>[peer_tag_param]
       Call-ID: [call_id]
       CSeq: 1 ACK
       Contact: <sip:[$from]@[local_ip]:[local_port]>
       Max-Forwards: 70
-      Subject: Performance Test
       Content-Length: 0
     ]]>
   </send>
@@ -102,12 +100,11 @@
       BYE [$UAS_CONTACT_URI] SIP/2.0
       Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
       From: <sip:[$from]@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
-      To: [service] <sip:[service]@[remote_ip]:[remote_port]>[peer_tag_param]
+      To: <sip:[service]@[remote_ip]:[remote_port]>[peer_tag_param]
       Call-ID: [call_id]
-      CSeq: 2 BYE
+      CSeq: 3 BYE
       Contact: <sip:[$from]@[local_ip]:[local_port]>
       Max-Forwards: 70
-      Subject: Performance Test
       Content-Length: 0
     ]]>
   </send>
