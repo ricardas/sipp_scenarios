@@ -95,30 +95,9 @@
     ]]>
   </send>
 
-  <!-- Wait for optional 100 Trying response -->
-  <recv response="100"
-        optional="true">
-  </recv>
-
   <!-- We should be getting 200 OK for our update-->
   <recv response="200" crlf="true">
   </recv>
-
-  <!-- Send ACK for received 200 OK -->
-  <send>
-    <![CDATA[
-      ACK [$UAC_CONTACT_URI] SIP/2.0
-      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
-      From: [$UAC_TO_URI];tag=[pid]SIPpTag01[call_number]
-      To: [$UAC_FROM_URI][$UAC_FROM_TAG]
-      Call-ID: [call_id]
-      CSeq: 1122 ACK
-      Contact: [$UAC_TO_URI]
-      Max-Forwards: 70
-      Subject: Performance Test
-      Content-Length: 0
-    ]]>
-  </send>
 
   <!-- Ring for another second -->
   <pause milliseconds="1000"/>
