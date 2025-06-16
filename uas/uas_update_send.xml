@@ -10,7 +10,7 @@
 <scenario name="UAS send UPDATE">
 
   <!-- Get details from the initial invite sent to us -->
-  <recv request="INVITE" crlf="true">
+  <recv request="INVITE">
     <action>
       <ereg regexp="<.*>" search_in="hdr" header="From" assign_to="UAC_FROM_URI"/>
       <ereg regexp=";tag=.*" search_in="hdr" header="From" assign_to="UAC_FROM_TAG"/>
@@ -71,7 +71,7 @@
   <pause milliseconds="1000"/>
 
   <!-- Send UPDATE -->
-  <send retrans="500">
+  <send>
     <![CDATA[
       UPDATE [$UAC_CONTACT_URI] SIP/2.0
       Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
@@ -96,14 +96,14 @@
   </send>
 
   <!-- We should be getting 200 OK for our update-->
-  <recv response="200" crlf="true">
+  <recv response="200">
   </recv>
 
   <!-- Ring for another second -->
   <pause milliseconds="1000"/>
 
   <!-- Answer initial INVITE -->
-  <send retrans="500">
+  <send>
     <![CDATA[
       SIP/2.0 200 OK
       [$UAC_VIA]
@@ -126,9 +126,7 @@
   </send>
 
   <!-- We should be getting ACK for our 200 OK -->
-  <recv request="ACK"
-        rtd="true"
-        crlf="true">
+  <recv request="ACK">
   </recv>
 
   <!-- Wait for BYE request -->
@@ -148,15 +146,5 @@
       Content-Length: 0
     ]]>
   </send>
-
-  <!-- Keep the call open for a while in case the 200 is lost to be     -->
-  <!-- able to retransmit it if we receive the BYE again.               -->
-  <timewait milliseconds="4000"/>
-
-  <!-- Definition of the response time repartition table (unit is ms)   -->
-  <ResponseTimeRepartition value="10, 20, 30, 40, 50, 100, 150, 200"/>
-
-  <!-- Definition of the call length repartition table (unit is ms)     -->
-  <CallLengthRepartition value="10, 50, 100, 500, 1000, 5000, 10000"/>
 
 </scenario>

@@ -13,7 +13,7 @@
   <Global variables="from" />
 
   <!-- Send initial INVITE -->
-  <send retrans="500">
+  <send>
     <![CDATA[
       INVITE sip:[service]@[remote_ip]:[remote_port] SIP/2.0
       Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
@@ -50,7 +50,7 @@
   </recv>
 
   <!-- Receive answer -->
-  <recv response="200" rtd="true">
+  <recv response="200">
     <action>
       <ereg regexp="sip:.*@[0-9\.:]+" search_in="hdr" header="Contact" assign_to="UAS_CONTACT_URI"/>
     </action>
@@ -76,7 +76,7 @@
   <pause milliseconds="1000"/>
 
   <!-- Send RE-INVITE -->
-  <send retrans="500">
+  <send>
     <![CDATA[
       INVITE [$UAS_CONTACT_URI] SIP/2.0
       Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
@@ -105,7 +105,7 @@
   </recv>
 
   <!-- Receive 200 OK to our RE-INVITE -->
-  <recv response="200" rtd="true">
+  <recv response="200">
   </recv>
 
   <!-- Send ACK to 200 OK -->
@@ -128,7 +128,7 @@
   <pause milliseconds="1000"/>
 
   <!-- Send BYE -->
-  <send retrans="500">
+  <send>
     <![CDATA[
       BYE [$UAS_CONTACT_URI] SIP/2.0
       Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
@@ -144,13 +144,7 @@
   </send>
 
   <!-- Receive 200 OK for BYE -->
-  <recv response="200" crlf="true">
+  <recv response="200">
   </recv>
-
-  <!-- definition of the response time repartition table (unit is ms)   -->
-  <ResponseTimeRepartition value="10, 20, 30, 40, 50, 100, 150, 200"/>
-
-  <!-- definition of the call length repartition table (unit is ms)     -->
-  <CallLengthRepartition value="10, 50, 100, 500, 1000, 5000, 10000"/>
 
 </scenario>
