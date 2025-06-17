@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE scenario SYSTEM "sipp.dtd">
+
+<!-- UAS receive CANCEL -->
+<!-- sipp -sf /path/to/uas_cancel_receive.xml -i LOCAL_IP -p LOCAL_PORT -->
+<!-- sipp -sf /usr/src/sipp_scenarios/uas/uas_cancel_receive.xml -i 192.168.0.15 -p 5069 -->
+
+<scenario name="UAS receive CANCEL">
+
+  <!-- Receive initial INVITE and get details from this request -->
+  <recv request="INVITE">
+    <action>
+      <ereg regexp=".*" search_in="hdr" header="CSeq" assign_to="UAC_INVITE_CSEQ"/>
+    </action>
+  </recv>
+
+  <!-- Save received Via values -->
+  <nop>
+    <action>
+      <assignstr assign_to="UAC_VIA" value="[last_Via:]" />
+    </action>
+  </nop>
+
+  <!-- Send a 100 Trying response -->
+  <send>
+    <![CDATA[
+      SIP/2.0 100 Trying
+      [last_Via:]
+      [last_From:]
+      [last_To:]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Content-Length: 0
+    ]]>
+  </send>
+
+  <!-- Delay to simulate PDD -->
+  <pause milliseconds="1000"/>
+
+  <!-- Send RINGING -->
+  <send>
+    <![CDATA[
+      SIP/2.0 180 Ringing
+      [last_Via:]
+      [last_From:]
+      [last_To:];tag=[pid]SIPpTag01[call_number]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Content-Length: 0
+    ]]>
+  </send>
+
+  <!-- Receive CANCEL -->
+  <recv request="CANCEL">
+  </recv>
+
+  <!-- Send 200 OK to CANCEL -->
+  <send>
+    <![CDATA[
+      SIP/2.0 200 OK
+      [last_Via:]
+      [last_From:]
+      [last_To:];tag=[pid]SIPpTag01[call_number]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Content-Length: [len]
+    ]]>
+  </send>
+
+  <!-- Send Request Terminated -->
+  <send>
+    <![CDATA[
+      SIP/2.0 487 Request Terminated
+      [$UAC_VIA]
+      [last_From:]
+      [last_To:];tag=[pid]SIPpTag01[call_number]
+      [last_Call-ID:]
+      CSeq[$UAC_INVITE_CSEQ]
+      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Content-Length: [len]
+    ]]>
+  </send>
+
+</scenario>
