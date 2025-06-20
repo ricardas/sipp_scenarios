@@ -36,7 +36,7 @@
   </send>
 
   <!-- Delay to simulate PDD -->
-  <pause milliseconds="1000"/>
+  <pause milliseconds="800"/>
 
   <!-- Send RINGING -->
   <send>
@@ -83,5 +83,9 @@
       Content-Length: [len]
     ]]>
   </send>
+
+  <!-- Receive ACK -->
+  <recv request="ACK">
+  </recv>
 
 </scenario>

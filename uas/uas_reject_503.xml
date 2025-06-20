@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE scenario SYSTEM "sipp.dtd">
+
+<!-- UAS reject with SIP 503 -->
+<!-- sipp -sf /path/to/uas_reject_503.xml -i LOCAL_IP -p LOCAL_PORT -->
+<!-- sipp -sf /usr/src/sipp_scenarios/uas/uas_reject_503.xml -i 192.168.0.15 -p 5069 -->
+
+<scenario name="UAS reject with SIP 503">
+
+  <!-- Receive initial INVITE and get details from this request -->
+  <recv request="INVITE">
+  </recv>
+
+  <!-- Send a 100 Trying response -->
+  <send>
+    <![CDATA[
+      SIP/2.0 100 Trying
+      [last_Via:]
+      [last_From:]
+      [last_To:]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Content-Length: 0
+    ]]>
+  </send>
+
+  <!-- Delay between responses -->
+  <pause milliseconds="100"/>
+
+  <!-- Send SIP 503 -->
+  <send>
+    <![CDATA[
+      SIP/2.0 503 Service Unavailable
+      [last_Via:]
+      [last_From:]
+      [last_To:];tag=[pid]SIPpTag01[call_number]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Content-Length: 0
+    ]]>
+  </send>
+
+  <!-- Receive ACK -->
+  <recv request="ACK">
+  </recv>
+
+</scenario>
