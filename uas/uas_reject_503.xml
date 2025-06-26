@@ -9,6 +9,9 @@
 
   <!-- Receive initial INVITE and get details from this request -->
   <recv request="INVITE">
+    <action>
+      <ereg regexp="<sip:.*>" search_in="hdr" header="To" assign_to="UAC_TO_URI"/>
+    </action>
   </recv>
 
   <!-- Send a 100 Trying response -->
@@ -20,13 +23,13 @@
       [last_To:]
       [last_Call-ID:]
       [last_CSeq:]
-      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Contact: [$UAC_TO_URI]
       Content-Length: 0
     ]]>
   </send>
 
   <!-- Delay between responses -->
-  <pause milliseconds="100"/>
+  <pause milliseconds="800"/>
 
   <!-- Send SIP 503 -->
   <send>
@@ -37,7 +40,7 @@
       [last_To:];tag=[pid]SIPpTag01[call_number]
       [last_Call-ID:]
       [last_CSeq:]
-      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Contact: [$UAC_TO_URI]
       Content-Length: 0
     ]]>
   </send>

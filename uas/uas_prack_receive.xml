@@ -11,6 +11,7 @@
   <recv request="INVITE">
     <action>
       <ereg regexp=".*" search_in="hdr" header="CSeq" assign_to="UAC_INVITE_CSEQ"/>
+      <ereg regexp="<sip:.*>" search_in="hdr" header="To" assign_to="UAC_TO_URI"/>
     </action>
   </recv>
 
@@ -30,7 +31,7 @@
       [last_To:];tag=[pid]SIPpTag01[call_number]
       [last_Call-ID:]
       [last_CSeq:]
-      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Contact: [$UAC_TO_URI]
       Content-Type: application/sdp
       Require: 100rel
       Rseq: 11111
@@ -59,7 +60,7 @@
       [last_To:];tag=[pid]SIPpTag01[call_number]
       [last_Call-ID:]
       [last_CSeq:]
-      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Contact: [$UAC_TO_URI]
       Content-Length: 0
     ]]>
   </send>
@@ -76,7 +77,7 @@
       [last_To:];tag=[pid]SIPpTag01[call_number]
       [last_Call-ID:]
       CSeq[$UAC_INVITE_CSEQ]
-      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Contact: [$UAC_TO_URI]
       Content-Type: application/sdp
       Content-Length: [len]
 
@@ -107,7 +108,7 @@
       [last_To:]
       [last_Call-ID:]
       [last_CSeq:]
-      Contact: <sip:[local_ip]:[local_port];transport=[transport]>
+      Contact: [$UAC_TO_URI]
       Content-Length: 0
     ]]>
   </send>

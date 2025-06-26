@@ -10,7 +10,7 @@
   <!-- Receive initial INVITE and get details from this request -->
   <recv request="INVITE">
     <action>
-      <ereg regexp="\<sip:.*@[0-9\.:]+\>" search_in="hdr" header="To" assign_to="UAC_TO_URI"/>
+      <ereg regexp="<sip:.*>" search_in="hdr" header="To" assign_to="UAC_TO_URI"/>
     </action>
   </recv>
 
@@ -23,7 +23,7 @@
       [last_To:]
       [last_Call-ID:]
       [last_CSeq:]
-      Contact: <[$UAC_TO_URI]>
+      Contact: [$UAC_TO_URI]
       Content-Length: 0
     ]]>
   </send>
@@ -40,7 +40,7 @@
       [last_To:];tag=[pid]SIPpTag01[call_number]
       [last_Call-ID:]
       [last_CSeq:]
-      Contact: <[$UAC_TO_URI]>
+      Contact: [$UAC_TO_URI]
       Content-Length: 0
     ]]>
   </send>
@@ -57,7 +57,7 @@
       [last_To:];tag=[pid]SIPpTag01[call_number]
       [last_Call-ID:]
       [last_CSeq:]
-      Contact: <[$UAC_TO_URI]>
+      Contact: [$UAC_TO_URI]
       Content-Type: application/sdp
       Content-Length: [len]
 
@@ -88,7 +88,7 @@
       [last_To:]
       [last_Call-ID:]
       [last_CSeq:]
-      Contact: <[$UAC_TO_URI]>
+      Contact: [$UAC_TO_URI]
       Content-Type: application/sdp
       Content-Length: [len]
 
@@ -119,7 +119,7 @@
       [last_To:]
       [last_Call-ID:]
       [last_CSeq:]
-      Contact: <[$UAC_TO_URI]>
+      Contact: [$UAC_TO_URI]
       Content-Length: 0
     ]]>
   </send>
