@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE scenario SYSTEM "sipp.dtd">
+
+<!-- UAC basic -->
+<!-- sipp -sf /path/to/uac_basic.xml REMOTE_IP -i LOCAL_IP -p LOCAL_PORT -r 1 -m 1 -s NUMBER_TO -set from NUMBER_FROM -->
+<!-- sipp -sf /usr/src/sipp_scenarios/uac/uac_basic.xml 192.168.0.123 -i 192.168.0.15 -p 5068 -r 1 -m 1 -s 37061234567 -set from 37060000000 -->
+
+<scenario name="UAC basic">
+
+  <!-- Global variables -->
+  <Global variables="from" />
+
+  <!-- Send initial INVITE -->
+  <send>
+    <![CDATA[
+      INVITE sip:[service]@[remote_ip]:[remote_port] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: <sip:[$from]@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
+      To: <sip:[service]@[remote_ip]:[remote_port]>
+      Call-ID: [call_id]
+      CSeq: 1 INVITE
+      Contact: <sip:[$from]@[local_ip]:[local_port]>
+      Max-Forwards: 70
+      Subject: Performance Test
+      Content-Type: application/sdp
+      Content-Length: [len]
+
+      v=0
+      o=user1 53655765 2353687637 IN IP[local_ip_type] [local_ip]
+      s=-
+      c=IN IP[media_ip_type] [media_ip]
+      t=0 0
+      m=audio [media_port] RTP/AVP 0
+      a=rtpmap:0 PCMU/8000
+    ]]>
+  </send>
+
+  <!-- Receive trying -->
+  <recv response="100" optional="true">
+  </recv>
+
+  <!-- Receive ringing -->
+  <recv response="180" optional="true">
+  </recv>
+
+  <!-- Receive Session progress -->
+  <recv response="183" optional="true">
+  </recv>
+
+  <!-- Receive answer -->
+  <recv response="200">
+    <action>
+      <ereg regexp="sip:.*@[0-9\.:]+" search_in="hdr" header="Contact" assign_to="UAS_CONTACT_URI"/>
+    </action>
+  </recv>
+
+  <!-- Send ACK to answer -->
+  <send>
+    <![CDATA[
+      ACK [$UAS_CONTACT_URI] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: <sip:[$from]@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
+      To: <sip:[service]@[remote_ip]:[remote_port]>[peer_tag_param]
+      Call-ID: [call_id]
+      CSeq: 1 ACK
+      Contact: <sip:[$from]@[local_ip]:[local_port]>
+      Max-Forwards: 70
+      Subject: Performance Test
+      Content-Length: 0
+    ]]>
+  </send>
+
+  <!-- Wait for a second -->
+  <pause milliseconds="1000"/>
+
+  <!-- Send BYE -->
+  <send>
+    <![CDATA[
+      BYE [$UAS_CONTACT_URI] SIP/2.0
+      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
+      From: <sip:[$from]@[local_ip]:[local_port]>;tag=[pid]SIPpTag00[call_number]
+      To: <sip:[service]@[remote_ip]:[remote_port]>[peer_tag_param]
+      Call-ID: [call_id]
+      CSeq: 3 BYE
+      Contact: <sip:[$from]@[local_ip]:[local_port]>
+      Max-Forwards: 70
+      Subject: Performance Test
+      Content-Length: 0
+    ]]>
+  </send>
+
+  <!-- Receive 200 OK for BYE -->
+  <recv response="200">
+  </recv>
+
+</scenario>
