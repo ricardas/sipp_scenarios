@@ -2,7 +2,7 @@
 <!DOCTYPE scenario SYSTEM "sipp.dtd">
 
 <!-- UAC basic with auth -->
-<!-- sipp -sf /path/to/uac_basic_with_auth.xml REMOTE_IP -i LOCAL_IP -p LOCAL_PORT -r 1 -m 1 -s NUMBER_TO -set from NUMBER_FROM -->
+<!-- sipp -sf /path/to/uac_basic_with_auth.xml REMOTE_IP -i LOCAL_IP -p LOCAL_PORT -r 1 -m 1 -s NUMBER_TO -set from NUMBER_FROM -au USER -ap PASSWORD -->
 <!-- sipp -sf /usr/src/sipp_scenarios/uac/uac_basic_with_auth.xml 192.168.0.123 -i 192.168.0.15 -p 5068 -r 1 -m 1 -s 37061234567 -set from 37060000000 -au 2222 -ap labas123456 -->
 
 <scenario name="UAC basic with auth">
