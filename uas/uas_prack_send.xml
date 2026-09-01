@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <!DOCTYPE scenario SYSTEM "sipp.dtd">
 
-<!-- UAS receive RE-INVITE -->
-<!-- sipp -sf /path/to/uas_reinvite_receive.xml -i LOCAL_IP -p LOCAL_PORT -->
-<!-- sipp -sf /usr/src/sipp_scenarios/uas/uas_reinvite_receive.xml -i 192.168.0.15 -p 5069 -->
+<!-- UAS send reliable 1xx (Require/RSeq) and handle PRACK -->
+<!-- Pairs with UAC that Supports/Requires 100rel (e.g. uac_prack_send.xml / SEMS B-leg). -->
+<!-- sipp -sf /path/to/uas_prack_send.xml -i LOCAL_IP -p LOCAL_PORT -->
+<!-- sipp -sf /usr/src/sipp_scenarios/uas/uas_prack_send.xml -i 192.168.0.15 -p 5069 -->
 
-<scenario name="UAS receive RE-INVITE">
+<scenario name="UAS send PRACK (reliable 183)">
 
   <!-- Receive initial INVITE and get details from this request -->
   <recv request="INVITE">
     <action>
+      <ereg regexp=".*" search_in="hdr" header="CSeq" assign_to="UAC_INVITE_CSEQ"/>
       <ereg regexp="&lt;sip:.*&gt;" search_in="hdr" header="To" assign_to="UAC_TO_URI"/>
     </action>
   </recv>
 
-  <!-- Send a 100 Trying response -->
+  <!-- Save received Via values -->
+  <nop>
+    <action>
+      <assignstr assign_to="UAC_VIA" value="[last_Via:]" />
+    </action>
+  </nop>
+
+  <!-- Send 100 Trying -->
   <send>
     <![CDATA[
       SIP/2.0 100 Trying
@@ -28,13 +37,43 @@
     ]]>
   </send>
 
-  <!-- Add some delay between messages -->
-  <pause milliseconds="50"/>
+  <!-- Short PDD -->
+  <pause milliseconds="200"/>
 
-  <!-- Send ringing response -->
+  <!-- Send Session Progress with 100rel (peer must PRACK) -->
   <send>
     <![CDATA[
-      SIP/2.0 180 Ringing
+      SIP/2.0 183 Session Progress
+      [last_Via:]
+      [last_From:]
+      [last_To:];tag=[pid]SIPpTag01[call_number]
+      [last_Call-ID:]
+      [last_CSeq:]
+      Contact: [$UAC_TO_URI]
+      Supported: 100rel
+      Require: 100rel
+      RSeq: 1
+      Content-Type: application/sdp
+      Content-Length: [len]
+
+      v=0
+      o=user1 53655765 2353687637 IN IP[local_ip_type] [local_ip]
+      s=-
+      c=IN IP[media_ip_type] [media_ip]
+      t=0 0
+      m=audio [media_port] RTP/AVP 0
+      a=rtpmap:0 PCMU/8000
+    ]]>
+  </send>
+
+  <!-- Receive PRACK (SDP body optional) -->
+  <recv request="PRACK">
+  </recv>
+
+  <!-- Send 200 OK to PRACK -->
+  <send>
+    <![CDATA[
+      SIP/2.0 200 OK
       [last_Via:]
       [last_From:]
       [last_To:];tag=[pid]SIPpTag01[call_number]
@@ -45,18 +84,18 @@
     ]]>
   </send>
 
-  <!-- Ring for one second -->
+  <!-- Wait for a second (ringing) -->
   <pause milliseconds="1000"/>
 
-  <!-- Answer -->
+  <!-- Answer initial INVITE -->
   <send>
     <![CDATA[
       SIP/2.0 200 OK
-      [last_Via:]
+      [$UAC_VIA]
       [last_From:]
       [last_To:];tag=[pid]SIPpTag01[call_number]
       [last_Call-ID:]
-      [last_CSeq:]
+      CSeq[$UAC_INVITE_CSEQ]
       Contact: [$UAC_TO_URI]
       Content-Type: application/sdp
       Content-Length: [len]
@@ -71,46 +110,15 @@
     ]]>
   </send>
 
-  <!-- We should be getting ACK for our 200 OK -->
+  <!-- Receive ACK for our 200 OK -->
   <recv request="ACK">
   </recv>
 
-  <!-- Wait for RE-INVITE -->
-  <recv request="INVITE">
-  </recv>
-
-  <!-- Send 200 to RE-INVITE -->
-  <send>
-    <![CDATA[
-      SIP/2.0 200 OK
-      [last_Via:]
-      [last_From:]
-      [last_To:]
-      [last_Call-ID:]
-      [last_CSeq:]
-      Contact: [$UAC_TO_URI]
-      Content-Type: application/sdp
-      Content-Length: [len]
-
-      v=0
-      o=user1 53655765 2353687637 IN IP[local_ip_type] [local_ip]
-      s=-
-      c=IN IP[media_ip_type] [media_ip]
-      t=0 0
-      m=audio [media_port] RTP/AVP 0
-      a=rtpmap:0 PCMU/8000
-    ]]>
-  </send>
-
-  <!-- We should be getting ACK for our 200 OK -->
-  <recv request="ACK">
-  </recv>
-
-  <!-- Wait for BYE request -->
+  <!-- Receive BYE -->
   <recv request="BYE">
   </recv>
 
-  <!-- Send a 200 OK response to BYE -->
+  <!-- Send 200 OK to BYE -->
   <send>
     <![CDATA[
       SIP/2.0 200 OK

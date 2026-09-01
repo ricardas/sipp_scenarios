@@ -10,7 +10,7 @@
   <!-- Receive initial INVITE and get details from this request -->
   <recv request="INVITE">
     <action>
-      <ereg regexp="<sip:.*>" search_in="hdr" header="To" assign_to="UAC_TO_URI"/>
+      <ereg regexp="&lt;sip:.*&gt;" search_in="hdr" header="To" assign_to="UAC_TO_URI"/>
       <ereg regexp=".*" search_in="hdr" header="CSeq" assign_to="UAC_INVITE_CSEQ"/>
     </action>
   </recv>
